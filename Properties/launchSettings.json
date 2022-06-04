@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "StockMarketCrawler": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
