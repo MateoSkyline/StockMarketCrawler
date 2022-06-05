@@ -1,13 +1,19 @@
 ﻿using StockMarketCrawler.Interfaces;
+using StockMarketCrawler.Logic.GetTickers;
 using StockMarketCrawler.Services;
 
 ILogger _logger = new LoggerService();
 IConfiguration _config = new ConfigurationService();
 
-int _triggerTime = Int32.Parse(_config.GetValue("PROCESS_TRIGGER_SECONDS"));
-PeriodicTimer timer = new(TimeSpan.FromSeconds(_triggerTime));
+_logger.Log("StockMarketCrawler has started.");
 
-while(await timer.WaitForNextTickAsync())
+
+// Timer to obtain ticker info from stooq.pl
+
+int _getTickersTimer = Int32.Parse(_config.GetValue("TRIGGER_GET_TICKERS"));
+PeriodicTimer getTickersTimer = new(TimeSpan.FromSeconds(_getTickersTimer));
+
+while (await getTickersTimer.WaitForNextTickAsync())
 {
-    _logger.Log("Something");
+    await new GetTickers().Run();
 }
