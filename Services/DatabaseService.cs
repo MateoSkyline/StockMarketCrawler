@@ -11,6 +11,7 @@ namespace StockMarketCrawler.Services
         {
             options.UseNpgsql(_config.GetConnectionString());
         }
-        public DbSet<TickerModel> Tickers { get; set; }
+        public DbSet<Ticker> Tickers { get; set; }
+        public DbSet<Job> Jobs { get; set; }
     }
 }

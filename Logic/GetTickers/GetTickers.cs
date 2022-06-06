@@ -1,9 +1,6 @@
-﻿using StockMarketCrawler.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using StockMarketCrawler.Interfaces;
+using StockMarketCrawler.Models;
+using StockMarketCrawler.Services;
 
 namespace StockMarketCrawler.Logic.GetTickers
 {
@@ -11,6 +8,8 @@ namespace StockMarketCrawler.Logic.GetTickers
     {
         private readonly GetTickersCrawler _crawler = new();
         private readonly GetTickersSaver _saver = new();
+        private readonly ILogger _logger = new LoggerService();
+        
         public GetTickers()
         {
             
@@ -18,8 +17,10 @@ namespace StockMarketCrawler.Logic.GetTickers
         
         public async Task Run()
         {
-            List<TickerModel> tickers = await GetTickersCrawler.GetTickers();
+            _logger.StartJob(this.GetType().Name);
+            List<Ticker> tickers = await GetTickersCrawler.GetTickers();
             await _saver.Save(tickers);
+            _logger.FinishJob(this.GetType().Name);
         }
     }
 }

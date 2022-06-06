@@ -13,5 +13,15 @@ namespace StockMarketCrawler.Services
         {
             Console.WriteLine($"[{GetTime()}] {message}");
         }
+
+        public void StartJob(string jobName)
+        {
+            Log($"[{jobName}] Job has started.");
+        }
+
+        public void FinishJob(string jobName)
+        {
+            Log($"[{jobName}] Job has finished.");
+        }
     }
 }

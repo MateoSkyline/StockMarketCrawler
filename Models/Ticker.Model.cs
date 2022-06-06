@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace StockMarketCrawler.Models
 {
     [Table("tickers")]
-    public class TickerModel
+    public class Ticker
     {
         [Column("id")]
         [Key]
@@ -12,7 +12,7 @@ namespace StockMarketCrawler.Models
         
         [Column("ticker")]
         [MaxLength(16)]
-        public string Ticker { get; set; }
+        public string TickerSymbol { get; set; }
         
         [Column("fullname")]
         [MaxLength(128)]
