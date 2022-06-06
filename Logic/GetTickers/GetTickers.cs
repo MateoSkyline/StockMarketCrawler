@@ -6,7 +6,6 @@ namespace StockMarketCrawler.Logic.GetTickers
 {
     public class GetTickers
     {
-        private readonly GetTickersCrawler _crawler = new();
         private readonly GetTickersSaver _saver = new();
         private readonly ILogger _logger = new LoggerService();
         
@@ -15,12 +14,13 @@ namespace StockMarketCrawler.Logic.GetTickers
             
         }
         
-        public async Task Run()
+        public async Task<int> Run()
         {
             _logger.StartJob(this.GetType().Name);
             List<Ticker> tickers = await GetTickersCrawler.GetTickers();
             await _saver.Save(tickers);
             _logger.FinishJob(this.GetType().Name);
+            return Status.Waiting;
         }
     }
 }
