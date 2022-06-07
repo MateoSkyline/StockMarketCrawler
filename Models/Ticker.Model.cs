@@ -17,5 +17,7 @@ namespace StockMarketCrawler.Models
         [Column("fullname")]
         [MaxLength(128)]
         public string FullName { get; set; }
+
+        public ICollection<Dividend> Dividends { get; set; }
     }
 }

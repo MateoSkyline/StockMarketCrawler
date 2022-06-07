@@ -23,5 +23,10 @@ namespace StockMarketCrawler.Services
         {
             Log($"[{jobName}] Job has finished.");
         }
+
+        public void FinishCrawling(string ticker)
+        {
+            Log($"[{ticker}] Crawling has finished.");
+        }
     }
 }

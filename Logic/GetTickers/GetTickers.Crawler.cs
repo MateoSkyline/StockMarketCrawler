@@ -8,15 +8,15 @@ namespace StockMarketCrawler.Logic.GetTickers
     {
         public static async Task<List<Ticker>> GetTickers()
         {
-            string url = "https://infostrefa.com/infostrefa/pl/spolki";
-            string html = await Crawler.CallUrl(url);
+            string TICKERS_URL = "https://infostrefa.com/infostrefa/pl/spolki";
+            string html = await Crawler.GetHtml(TICKERS_URL);
             List<Ticker> tickers = await ParseDocument(html);
             return tickers;
         }
         
         private static async Task<List<Ticker>> ParseDocument(string document)
         {
-            HtmlDocument doc = new HtmlDocument();
+            HtmlDocument doc = new();
             doc.LoadHtml(document);
             List<HtmlNode> tickers = doc.DocumentNode.SelectNodes("//div[@id='companiesList']/table/tbody/tr").ToList();
             List<Ticker> tickerModels = new List<Ticker>();

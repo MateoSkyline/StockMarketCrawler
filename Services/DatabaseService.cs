@@ -11,7 +11,16 @@ namespace StockMarketCrawler.Services
         {
             options.UseNpgsql(_config.GetConnectionString());
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Ticker>()
+                .HasMany(d => d.Dividends)
+                .WithOne(t => t.Ticker);
+        }
+        
         public DbSet<Ticker> Tickers { get; set; }
         public DbSet<Job> Jobs { get; set; }
+        public DbSet<Dividend> Dividends { get; set; }
     }
 }

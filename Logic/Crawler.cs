@@ -4,7 +4,7 @@ namespace StockMarketCrawler.Logic
 {
     public class Crawler
     {
-        public static async Task<string> CallUrl(string fullUrl)
+        public static async Task<string> GetHtml(string fullUrl)
         {
             HttpClient client = new HttpClient();
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls13;

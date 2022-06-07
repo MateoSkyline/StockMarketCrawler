@@ -33,6 +33,7 @@ namespace StockMarketCrawler.Logic.JobHandler
             int status = job.Name switch
             {
                 "GetTickers" => await new GetTickers.GetTickers().Run(),
+                "GetDividends" => await new GetDividends.GetDividends().Run(),
                 _ => throw new ArgumentException(message: "Wrong job supplied", paramName: nameof(job))
             };
             await SetJobStatus(job, status);
@@ -43,7 +44,7 @@ namespace StockMarketCrawler.Logic.JobHandler
         {
             return await _db.Jobs
                 .Where(job => job.Active)
-                .Where(job => job.NextExecution <= DateTime.Now)
+                .Where(job => job.NextExecution <= DateTime.Now || job.NextExecution == null)
                 .ToListAsync();
         }
 
