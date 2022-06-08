@@ -50,7 +50,8 @@ namespace StockMarketCrawler.Logic.GetDividends
                         DividendAmount = ParseDividendAmount(_dividendAmount),
                         DividendDate = ParseDividendDate(_dividendDate),
                         PaymentDate = ParseDividendDate(_paymentDate),
-                        Year = ParseDividendYear(_year)
+                        Year = ParseDividendYear(_year),
+                        Ticker = ticker
                     };
                     dividendModels.Add(_dividend);
                 }
@@ -69,10 +70,15 @@ namespace StockMarketCrawler.Logic.GetDividends
                 .Replace("zł", ""));
         }
 
-        private static DateTimeOffset ParseDividendDate(string dividendDate)
+        private static DateTimeOffset? ParseDividendDate(string dividendDate)
         {
-            return DateTimeOffset.ParseExact(dividendDate
-                .Replace(" ", ""), "dd.MM.yyyy", CultureInfo.InvariantCulture);
+            string correctedDate = dividendDate
+                .Replace(" ", "")
+                .Replace("*", "");
+            if (correctedDate.Contains(","))
+                correctedDate = correctedDate.Split(",")[1];  // TODO: Correct to handle both dates
+            DateTimeOffset? dateTime = DateTimeOffset.ParseExact(correctedDate, "dd.MM.yyyy", CultureInfo.InvariantCulture);
+            return dateTime;
         }
 
         private static int ParseDividendYear(string year)

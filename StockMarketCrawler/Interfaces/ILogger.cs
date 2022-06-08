@@ -5,6 +5,7 @@
         void Log(string message);
         void StartJob(string jobName);
         void FinishJob(string jobName);
-        void FinishCrawling(string ticker);
+        void StartCrawling(string jobName, string ticker);
+        void FinishCrawling(string jobName, string ticker);
     }
 }

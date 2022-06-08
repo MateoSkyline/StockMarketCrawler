@@ -4,7 +4,7 @@ using StockMarketCrawler.Models;
 
 namespace StockMarketCrawler.Services
 {
-    internal class DatabaseService : DbContext
+    public class DatabaseService : DbContext
     {
         private readonly IConfiguration _config = new ConfigurationService();
         protected override void OnConfiguring(DbContextOptionsBuilder options)

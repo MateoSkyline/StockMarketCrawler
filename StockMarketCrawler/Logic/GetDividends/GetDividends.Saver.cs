@@ -11,20 +11,34 @@ namespace StockMarketCrawler.Logic.GetDividends
 {
     public class GetDividendsSaver
     {
-        private readonly DatabaseService _db = new();
-        
-        public async Task Save(List<Dividend> dividends)
+        public readonly DatabaseService _db;
+
+        public GetDividendsSaver(DatabaseService db)
         {
-            dividends = await FilterTickers(dividends);
-            var ticker = _db.Tickers.Include(d => d.Dividends).First();
-            dividends.ForEach(x => ticker.Dividends.Add(x));
-            await _db.SaveChangesAsync();
+            _db = db;
         }
 
-        private async Task<List<Dividend>> FilterTickers(List<Dividend> dividends)
+        public async Task Save(List<List<Dividend>> dividends)
+        {
+            dividends = await FilterDividends(dividends);
+            
+            //var tickerReference = _db.Tickers.Include(d => d.Dividends).Where(t => t.Id == ticker.Id).First();
+            //dividends.ForEach(x => tickerReference.Dividends.Add(x));
+
+            //dividends.ForEach(x => _db.Dividends.Add(x));
+            //await _db.SaveChangesAsync();
+        }
+
+        private async Task<List<List<Dividend>>> FilterDividends(List<List<Dividend>> dividends)
+        {
+            dividends = await DeleteDuplicatedDividends(dividends);
+            return dividends;
+        }
+
+        private async Task<List<List<Dividend>>> DeleteDuplicatedDividends(List<List<Dividend>> dividends)
         {
             var dividendsToRemove = _db.Dividends.ToList();
-            dividends.RemoveAll(x => dividendsToRemove.Any(y => y.DividendDate == x.DividendDate && y.DividendAmount == x.DividendAmount && y.Ticker == x.Ticker));
+            dividends.ForEach(d => d.RemoveAll(x => dividendsToRemove.Any(y => y.DividendDate == x.DividendDate && y.DividendAmount == x.DividendAmount && y.Ticker == x.Ticker)));
             return dividends;
         }
     }

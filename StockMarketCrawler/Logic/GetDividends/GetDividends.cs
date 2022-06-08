@@ -3,19 +3,20 @@ using StockMarketCrawler.Interfaces;
 using StockMarketCrawler.Logic.GetTickers;
 using StockMarketCrawler.Models;
 using StockMarketCrawler.Services;
+using System.Collections.Concurrent;
 
 namespace StockMarketCrawler.Logic.GetDividends
 {
     public class GetDividends
     {
-        private List<Task> _tasks = new();
-        private readonly DatabaseService _db = new();
-        private readonly GetDividendsSaver _saver = new();
+        private readonly DatabaseService _db;
+        private readonly GetDividendsSaver _saver;
         private readonly ILogger _logger = new LoggerService();
 
         public GetDividends()
         {
-
+            _db = new DatabaseService();
+            _saver = new GetDividendsSaver(_db);
         }
 
         public async Task<int> Run()
@@ -23,22 +24,28 @@ namespace StockMarketCrawler.Logic.GetDividends
             _logger.StartJob(this.GetType().Name);
             
             List<Ticker> tickers = await _db.Tickers.ToListAsync();
-            tickers.ForEach(ticker =>
+            //List<Dividend> dividends = new();
+            ConcurrentBag<List<Dividend>> dividends = new();
+
+            Parallel.ForEach(tickers, new ParallelOptions { MaxDegreeOfParallelism = 5 },
+            ticker =>
             {
-                _tasks.Add(Task.Run(() =>
-                    GetDividendsFromTicker(ticker)));
+                dividends.Add(GetDividendsFromTicker(ticker).GetAwaiter().GetResult());
             });
-            Task.WaitAll();
+
+            await _saver.Save(dividends.ToList());
             
             _logger.FinishJob(this.GetType().Name);
             return Status.Waiting;
         }
-
-        private async Task GetDividendsFromTicker(Ticker ticker)
+        
+        private async Task<List<Dividend>> GetDividendsFromTicker(Ticker ticker)
         {
+            _logger.StartCrawling(this.GetType().Name, ticker.TickerSymbol);
             List<Dividend> dividends = await GetDividendsCrawler.GetDividends(ticker);
-            await _saver.Save(dividends);
-            _logger.FinishCrawling(ticker.TickerSymbol);
+            //await _saver.Save(ticker, dividends);
+            _logger.FinishCrawling(this.GetType().Name, ticker.TickerSymbol);
+            return dividends;
         }
     }
 }
