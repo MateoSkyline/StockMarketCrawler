@@ -17,10 +17,14 @@ namespace StockMarketCrawler.Services
             modelBuilder.Entity<Ticker>()
                 .HasMany(d => d.Dividends)
                 .WithOne(t => t.Ticker);
+            modelBuilder.Entity<Ticker>()
+                .HasMany(d => d.DailyStocks)
+                .WithOne(t => t.Ticker);
         }
         
         public DbSet<Ticker> Tickers { get; set; }
         public DbSet<Job> Jobs { get; set; }
         public DbSet<Dividend> Dividends { get; set; }
+        public DbSet<DailyStock> DailyStocks { get; set; }
     }
 }

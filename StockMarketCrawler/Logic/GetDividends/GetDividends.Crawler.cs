@@ -35,7 +35,7 @@ namespace StockMarketCrawler.Logic.GetDividends
         {
             HtmlDocument doc = new();
             doc.LoadHtml(document);
-            List<HtmlNode> dividends = doc.DocumentNode.SelectNodes("//table[contains(@class, 'instrument-dividends')]/tr[@class='instrument-dividend']").ToList();
+            List<HtmlNode> dividends = doc.DocumentNode.SelectNodes("//table[contains(@class, 'instrument-dividends')]/tr[contains(@class, 'instrument-dividend')]").ToList();
             List<Dividend> dividendModels = new List<Dividend>();
             foreach (HtmlNode dividend in dividends)
             {
@@ -43,22 +43,15 @@ namespace StockMarketCrawler.Logic.GetDividends
                 string _dividendDate = dividend.SelectSingleNode("td[2]").InnerText;
                 string _paymentDate = dividend.SelectSingleNode("td[4]").InnerText;
                 string _dividendAmount = dividend.SelectSingleNode("td[5]").InnerText;
-                try
+                Dividend _dividend = new()
                 {
-                    Dividend _dividend = new()
-                    {
-                        DividendAmount = ParseDividendAmount(_dividendAmount),
-                        DividendDate = ParseDividendDate(_dividendDate),
-                        PaymentDate = ParseDividendDate(_paymentDate),
-                        Year = ParseDividendYear(_year),
-                        Ticker = ticker
-                    };
-                    dividendModels.Add(_dividend);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                }
+                    DividendAmount = ParseDividendAmount(_dividendAmount),
+                    DividendDate = ParseDividendDate(_dividendDate),
+                    PaymentDate = ParseDividendDate(_paymentDate),
+                    Year = ParseDividendYear(_year),
+                    Ticker = ticker
+                };
+                dividendModels.Add(_dividend);
             }
             return dividendModels;
         }

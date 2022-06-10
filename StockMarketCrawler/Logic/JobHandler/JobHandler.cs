@@ -30,6 +30,7 @@ namespace StockMarketCrawler.Logic.JobHandler
             {
                 "GetTickers" => await new GetTickers.GetTickers().Run(),
                 "GetDividends" => await new GetDividends.GetDividends().Run(),
+                "GetDailyStock" => await new GetDailyStock.GetDailyStock().Run(),
                 _ => throw new ArgumentException(message: "Wrong job supplied", paramName: nameof(job))
             };
             await SetJobStatus(job, status);

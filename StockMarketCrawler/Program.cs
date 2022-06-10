@@ -1,4 +1,5 @@
 ﻿using StockMarketCrawler.Interfaces;
+using StockMarketCrawler.Logic.GetDailyStock;
 using StockMarketCrawler.Logic.GetDividends;
 using StockMarketCrawler.Logic.JobHandler;
 using StockMarketCrawler.Services;
@@ -17,7 +18,8 @@ while (await timer.WaitForNextTickAsync())
     await new JobHandler().Run();
 }
 #else
-new GetDividends().Run().Wait();
+//new GetDividends().Run().Wait();
+new GetDailyStock().Run().Wait();
 //new JobHandler().Run().Wait();
 
 while (await timer.WaitForNextTickAsync())
