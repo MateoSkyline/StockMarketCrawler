@@ -8,7 +8,6 @@ namespace StockMarketCrawler.Logic.JobHandler
     public class JobHandler
     {
         private readonly DatabaseService _db = new();
-        private List<Task> _tasks = new();
 
         public JobHandler()
         {
@@ -18,16 +17,13 @@ namespace StockMarketCrawler.Logic.JobHandler
         public async Task Run()
         {
             List<Job> jobs = await GetViableJobsAsync();
-            jobs.ForEach(job =>
-            {
-                _tasks.Add(Task.Run(() =>
-                    Run(job)));
-            });
-            await Task.WhenAll(_tasks);
+            await Run(jobs.FirstOrDefault());
         }
 
-        private async Task Run(Job job)
+        private async Task Run(Job? job)
         {
+            if (job == null)
+                return;
             await SetLastExecutionTimeAsync(job);
             await SetJobStatus(job, Status.Running);
             int status = job.Name switch
@@ -42,10 +38,18 @@ namespace StockMarketCrawler.Logic.JobHandler
 
         private async Task<List<Job>> GetViableJobsAsync()
         {
-            return await _db.Jobs
+            var activeRunningJobs = await _db.Jobs
                 .Where(job => job.Active)
-                .Where(job => job.NextExecution <= DateTime.Now || job.NextExecution == null)
-                .ToListAsync();
+                .Where(job => job.Status == Status.Running)
+                .CountAsync();
+            if (activeRunningJobs <= 0)
+                return await _db.Jobs
+                    .Where(job => job.Active)
+                    .Where(job => job.NextExecution <= DateTime.Now || job.NextExecution == null)
+                    .OrderBy(job => job.NextExecution)
+                    .ToListAsync();
+            else
+                return new List<Job>();
         }
 
         private async Task SetJobStatus(Job job, int status)

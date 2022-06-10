@@ -24,7 +24,6 @@ namespace StockMarketCrawler.Logic.GetDividends
             _logger.StartJob(this.GetType().Name);
             
             List<Ticker> tickers = await _db.Tickers.ToListAsync();
-            //List<Dividend> dividends = new();
             ConcurrentBag<List<Dividend>> dividends = new();
 
             Parallel.ForEach(tickers, new ParallelOptions { MaxDegreeOfParallelism = 5 },
@@ -43,7 +42,6 @@ namespace StockMarketCrawler.Logic.GetDividends
         {
             _logger.StartCrawling(this.GetType().Name, ticker.TickerSymbol);
             List<Dividend> dividends = await GetDividendsCrawler.GetDividends(ticker);
-            //await _saver.Save(ticker, dividends);
             _logger.FinishCrawling(this.GetType().Name, ticker.TickerSymbol);
             return dividends;
         }

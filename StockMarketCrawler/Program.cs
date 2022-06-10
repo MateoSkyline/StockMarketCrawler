@@ -18,6 +18,7 @@ while (await timer.WaitForNextTickAsync())
 }
 #else
 new GetDividends().Run().Wait();
+//new JobHandler().Run().Wait();
 
 while (await timer.WaitForNextTickAsync())
 {

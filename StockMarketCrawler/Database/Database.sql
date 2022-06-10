@@ -14,7 +14,8 @@
 INSERT INTO public.jobs 
     (name, description, active, status, crontab, next_execution) 
 VALUES 
-    ('GetTickers', '-', true, 0, '00 20 * * *', '2022-06-06 16:00:00');
+    ('GetTickers', '-', true, 0, '00 20 * * *', '2022-06-06 16:00:00'),
+    ('GetDividends', '-', true, 0, '00 20 * * *', '2022-06-06 16:00:00');
 
 CREATE TABLE IF NOT EXISTS public.tickers
 (
@@ -23,3 +24,14 @@ CREATE TABLE IF NOT EXISTS public.tickers
     fullname character varying(128) COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT tickers_pkey PRIMARY KEY (id)
 );
+
+CREATE TABLE IF NOT EXISTS public.dividends
+(
+    id bigint NOT NULL DEFAULT nextval('dividends_id_seq'::regclass),
+    ticker_id bigint NOT NULL DEFAULT nextval('dividends_ticker_id_seq'::regclass),
+    dividend_amount double precision,
+    year integer,
+    dividend_date timestamp with time zone,
+    payment_date timestamp with time zone,
+    CONSTRAINT dividends_pkey PRIMARY KEY (id)
+)
