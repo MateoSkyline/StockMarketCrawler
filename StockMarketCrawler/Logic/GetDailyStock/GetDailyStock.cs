@@ -33,7 +33,7 @@ namespace StockMarketCrawler.Logic.GetDailyStock
             });
 
             await _saver.Save(dailyStocks.ToList());
-
+            
             _logger.FinishJob(this.GetType().Name);
             return Status.Waiting;
         }
