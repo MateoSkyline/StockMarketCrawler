@@ -20,5 +20,6 @@ namespace StockMarketCrawler.Models
 
         public ICollection<Dividend> Dividends { get; set; }
         public ICollection<DailyStock> DailyStocks { get; set; }
+        public ICollection<UserStock> UserStocks { get; set; }
     }
 }
